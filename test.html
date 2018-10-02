@@ -2,7 +2,7 @@
 
 <html>
  <head>
-  <title>Dashboard</title>
+  <title>Pannello</title>
   <meta name="viewport" content="width=210, initial-scale=1">
  </head>
  <body style="width:210px;height:450px">
@@ -50,6 +50,7 @@
           // 10 times a second. Also ensure that when disconnected, Puck.js
           // resets so the setInterval doesn't keep draining battery.
           connection.write("setInterval(function(){Bluetooth.println(JSON.stringify({light:Puck.light()}));},100);NRF.on('disconnect', function() {reset()});\n",
+          connection.write("setInterval(function(){Bluetooth.println(JSON.stringify({bat:Puck.bat()}));},100);NRF.on('disconnect', function() {reset()});\n",                           
             function() { console.log("Ready..."); });
           }, 1500);
         });
@@ -60,7 +61,7 @@
   var elements = {
     heading : TD.label({x:10,y:10,width:190,height:50,label:"Control Board"}),
     light : TD.gauge({x:10,y:70,width:190,height:220,label:"Light",value:0,min:0,max:100}),
-    bat : TD.gauge({x:210,y:70,width:190,height:220,label:"Battery Level",value:0,min:0,max:100}),
+    bat : TD.gauge({x:210,y:70,width:190,height:220,label:"Battery",value:0,min:0,max:100}),
     modal: TD.modal({x:10,y:10,width:600,height:430,label:"Click to connect",onchange:connectDevice})
   }
   for (var i in elements)
