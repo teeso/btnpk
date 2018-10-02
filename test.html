@@ -1,69 +1,32 @@
 <html>
  <head>
-   <style>
-     body { margin:0;  }
-     svg {
-       display:block; position:absolute;
-       top:0%; left:0%; width:100%; height:100%;
-     }
-   </style>    
+   <meta name="viewport" content="width=640, initial-scale=1">
  </head>
  <body>
-  <svg viewBox="0 0 24 24">
-    <path fill="#000000" d="M12,2A7,7 0 0,0 5,9C5,11.38 6.19,13.47 8,14.74V17A1,1 0 0,0 9,18H15A1,1 0 0,0 16,17V14.74C17.81,13.47 19,11.38 19,9A7,7 0 0,0 12,2M9,21A1,1 0 0,0 10,22H14A1,1 0 0,0 15,21V20H9V21Z" />
-  </svg>
-  <script src="https://www.puck-js.com/puck.js"></script>
-  <script type="text/javascript">
-    // Get the actual curve inside the SVG. You could make differemt
-    // parts of a more complex SVG do different things...
-    var path = document.getElementsByTagName('path')[0];
-    // Make sure your mouse cursor turns into a hand when over it, and gray it out
-    path.style="cursor:pointer;fill:#BBB";
-
-    // Called when we get a line of data - updates the light color
-    function onLine(v) {
-      console.log("Received: "+JSON.stringify(v));
-      path.style.fill="rgb("+Math.round(v*255)+",0,0)";
-    }
-
-    // When clicked, connect or disconnect
-    var connection;
-    path.addEventListener("click", function() {
-      if (connection) {
-        connection.close();
-        connection = undefined;
-      }
-      Puck.connect(function(c) {
-        if (!c) {
-          alert("Couldn't connect!");
-          return;
-        }
-        connection = c;
-        // Handle the data we get back, and call 'onLine'
-        // whenever we get a line
-        var buf = "";
-        connection.on("data", function(d) {
-          buf += d;
-          var i = buf.indexOf("\n");
-          while (i>=0) {
-            onLine(buf.substr(0,i));
-            buf = buf.substr(i+1);
-            i = buf.indexOf("\n");
-          }
-        });
-        // First, reset Puck.js
-        connection.write("reset();\n", function() {
-          // Wait for it to reset itself
-          setTimeout(function() {
-            // Now tell it to write data on the current light level to Bluetooth
-            // 10 times a second. Also ensure that when disconnected, Puck.js
-            // resets so the setInterval doesn't keep draining battery.
-            connection.write("setInterval(function(){Bluetooth.println(Puck.light());},100);NRF.on('disconnect', function() {reset()});\n",
-              function() { console.log("Ready..."); });
-          }, 1500);
-        });
-      });
-    });
-  </script>
+   <link href="tinydash.css" rel="stylesheet">
+   <script src="tinydash.js"></script>
+   <link href="tinydash_editor.css" rel="stylesheet">
+   <script src="tinydash_editor.js"></script>
+   <script>
+     var data = [];
+     for (var i=0;i<100;i++) data.push(Math.cos(i/10));
+     var o = {
+       l:TD.label({x:10,y:10,width:200,height:130,label:"Test Page"}),
+       t:TD.toggle({x:10,y:150,width:200,height:60,label:"Toggle",value:1,name:"toggle"}),
+       v:TD.value({x:10,y:220,width:200,height:60,label:"Value",value:"1.234"}),
+       b:TD.button({x:10,y:290,width:200,height:100,label:"Press Me",value:0,name:"button",onchange:function(e){o.log.log("Pressed!");}}),
+       g:TD.gauge({x:220,y:10,width:200,height:200,label:"A Gauge",value:25,min:0,max:100,name:"gauge"}),
+       gr:TD.graph({x:220,y:220,width:400,height:170,label:"A Graph",data:data}),
+       log:TD.log({x:430,y:10,width:190,height:200,label:"A Log",text:"A\nB\nC"}),
+       vs:TD.value({x:10,y:400,width:200,height:60,label:"Steppable Value",value:"1.2",min:1,step:0.1,max:2}),
+       //modal:TD.modal({x:10,y:10,width:400,height:400,label:"Click to connect",onchange:function(el) {o.log.log("Modal clicked");el.remove()}})
+     };
+     o.log.log("Hello");
+     for (var i in o) document.body.appendChild(o[i]);
+     setInterval(function() {
+       TD.update({gauge : 40*Math.sin(Date.now()/1000)+50});
+     }, 100);
+     //TD.startEditor();
+   </script>
  </body>
 </html>
