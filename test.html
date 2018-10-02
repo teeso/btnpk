@@ -1,20 +1,3 @@
-// our historical data
-var history = new Int16Array(100);
-
-// Get Data and store it in RAM
-function logData() {
-  var data = E.getTemperature();
-  for (var i=0;i<history.length-1;i++)
-    history[i] = history[i+1];
-  history[history.length-1] = data*100;
-}
-
-// Start recording
-setInterval(logData, 1000);
-It'll log a new temperature value to the history variable every second.
-
-Now, disconnect and update the Web Bluetooth page with what's below (or you can click Try Me! on the code snippet below).
-
 <html>
  <head>
   <title>Dashboard</title>
