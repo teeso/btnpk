@@ -1,69 +1,36 @@
-
-
 <html>
  <head>
-  <title>Pannello</title>
-  <meta name="viewport" content="width=210, initial-scale=1">
+   <style>
+     body { margin:0;  }
+     svg {
+       display:block; position:absolute;
+       top:0%; left:0%; width:100%; height:100%;
+     }
+   </style>    
  </head>
- <body style="width:210px;height:450px">
-  <link href="https://espruino.github.io/TinyDash/tinydash.css" rel="stylesheet">
-  <script src="https://espruino.github.io/TinyDash/tinydash.js"></script>
-  <script src="https://www.puck-js.com/puck.js"></script>  
-  <script>
-  // Called when we get a line of data - updates the light color
-  function onLine(line) {
-    try {
-      var j = JSON.parse(line);
-      console.log("Received JSON: ",j);
-      elements.light.setValue(j.light*100);
-    } catch(e) {
-      console.log("Received: ",line);
-    }
-  }
-  var connection;
-  function connectDevice() {
-    Puck.connect(function(c) {
-      if (!c) {
-        alert("Couldn't connect!");
-        return;
+ <body>
+  <svg viewBox="0 0 24 24">
+    <path fill="#000000" d="M12,2A7,7 0 0,0 5,9C5,11.38 6.19,13.47 8,14.74V17A1,1 0 0,0 9,18H15A1,1 0 0,0 16,17V14.74C17.81,13.47 19,11.38 19,9A7,7 0 0,0 12,2M9,21A1,1 0 0,0 10,22H14A1,1 0 0,0 15,21V20H9V21Z" />
+  </svg>
+  <script src="https://www.puck-js.com/puck.js"></script>
+  <script type="text/javascript">
+    // Get the actual curve inside the SVG. You could make differemt
+    // parts of a more complex SVG do different things...
+    var path = document.getElementsByTagName('path')[0];
+    // Make sure your mouse cursor turns into a hand when over it, and gray it out
+    path.style="cursor:pointer;fill:#BBB";
+    // Now send commands to turn the LED on or off
+    var on = false;
+    path.addEventListener("click", function() {
+      on = !on;
+      if (on) {
+        path.style.fill="red";
+        Puck.write('LED1.set();\n');
+      } else {
+        path.style.fill="#444";
+        Puck.write('LED1.reset();\n');
       }
-      connection = c;
-      // remove modal window
-      elements.modal.remove();
-      // Handle the data we get back, and call 'onLine'
-      // whenever we get a line
-      var buf = "";
-      connection.on("data", function(d) {
-        buf += d;
-        var i = buf.indexOf("\n");
-        while (i>=0) {
-          onLine(buf.substr(0,i));
-          buf = buf.substr(i+1);
-          i = buf.indexOf("\n");
-        }
-      });
-      // First, reset Puck.js
-      connection.write("reset();\n", function() {
-        // Wait for it to reset itself
-        setTimeout(function() {
-          // Now tell it to write data on the current light level to Bluetooth
-          // 10 times a second. Also ensure that when disconnected, Puck.js
-          // resets so the setInterval doesn't keep draining battery.
-          connection.write("setInterval(function(){Bluetooth.println(JSON.stringify({light:Puck.light()}));},100);NRF.on('disconnect', function() {reset()});\n",
-            function() { console.log("Ready..."); });
-          }, 1500);
-        });
-      });
-
-  }
-  // Set up the controls we see on the screen    
-  var elements = {
-    heading : TD.label({x:10,y:10,width:190,height:50,label:"Control Board"}),
-    light : TD.gauge({x:10,y:70,width:190,height:220,label:"Light",value:0,min:0,max:100}),
-    modal: TD.modal({x:10,y:10,width:600,height:430,label:"Click to connect",onchange:connectDevice})
-  }
-  for (var i in elements)
-    document.body.appendChild(elements[i]);
+    });
   </script>
- </body>
-</html>
+  </body>
+ </html>
