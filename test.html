@@ -1,32 +1,18 @@
 <html>
  <head>
-   <meta name="viewport" content="width=640, initial-scale=1">
+  <title>Cruscotto</title>
+  <meta name="viewport" content="width=620, initial-scale=1">
  </head>
- <body>
-   <link href="tinydash.css" rel="stylesheet">
-   <script src="tinydash.js"></script>
-   <link href="tinydash_editor.css" rel="stylesheet">
-   <script src="tinydash_editor.js"></script>
-   <script>
-     var data = [];
-     for (var i=0;i<100;i++) data.push(Math.cos(i/10));
-     var o = {
-       l:TD.label({x:10,y:10,width:200,height:130,label:"Test Page"}),
-       t:TD.toggle({x:10,y:150,width:200,height:60,label:"Toggle",value:1,name:"toggle"}),
-       v:TD.value({x:10,y:220,width:200,height:60,label:"Value",value:"1.234"}),
-       b:TD.button({x:10,y:290,width:200,height:100,label:"Press Me",value:0,name:"button",onchange:function(e){o.log.log("Pressed!");}}),
-       g:TD.gauge({x:220,y:10,width:200,height:200,label:"A Gauge",value:25,min:0,max:100,name:"gauge"}),
-       gr:TD.graph({x:220,y:220,width:400,height:170,label:"A Graph",data:data}),
-       log:TD.log({x:430,y:10,width:190,height:200,label:"A Log",text:"A\nB\nC"}),
-       vs:TD.value({x:10,y:400,width:200,height:60,label:"Steppable Value",value:"1.2",min:1,step:0.1,max:2}),
-       //modal:TD.modal({x:10,y:10,width:400,height:400,label:"Click to connect",onchange:function(el) {o.log.log("Modal clicked");el.remove()}})
-     };
-     o.log.log("Hello");
-     for (var i in o) document.body.appendChild(o[i]);
-     setInterval(function() {
-       TD.update({gauge : 40*Math.sin(Date.now()/1000)+50});
-     }, 100);
-     //TD.startEditor();
-   </script>
+ <body style="width:620px;height:450px">
+  <link href="https://espruino.github.io/TinyDash/tinydash.css" rel="stylesheet">
+  <script src="https://espruino.github.io/TinyDash/tinydash.js"></script>
+  <script src="https://www.puck-js.com/puck.js"></script>  
+  <script>
+  var elements = {
+    heading : TD.label({x:10,y:10,width:190,height:50,label:"Parametri"})
+  }
+  for (var i in elements)
+    document.body.appendChild(elements[i]);
+  </script>
  </body>
 </html>
