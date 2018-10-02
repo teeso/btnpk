@@ -19,18 +19,51 @@
     var path = document.getElementsByTagName('path')[0];
     // Make sure your mouse cursor turns into a hand when over it, and gray it out
     path.style="cursor:pointer;fill:#BBB";
-    // Now send commands to turn the LED on or off
-    var on = false;
+
+    // Called when we get a line of data - updates the light color
+    function onLine(v) {
+      console.log("Received: "+JSON.stringify(v));
+      path.style.fill="rgb("+Math.round(v*255)+",0,0)";
+    }
+
+    // When clicked, connect or disconnect
+    var connection;
     path.addEventListener("click", function() {
-      on = !on;
-      if (on) {
-        path.style.fill="red";
-        Puck.write('LED1.set();\n');
-      } else {
-        path.style.fill="#444";
-        Puck.write('LED1.reset();\n');
+      if (connection) {
+        connection.close();
+        connection = undefined;
       }
+      Puck.connect(function(c) {
+        if (!c) {
+          alert("Couldn't connect!");
+          return;
+        }
+        connection = c;
+        // Handle the data we get back, and call 'onLine'
+        // whenever we get a line
+        var buf = "";
+        connection.on("data", function(d) {
+          buf += d;
+          var i = buf.indexOf("\n");
+          while (i>=0) {
+            onLine(buf.substr(0,i));
+            buf = buf.substr(i+1);
+            i = buf.indexOf("\n");
+          }
+        });
+        // First, reset Puck.js
+        connection.write("reset();\n", function() {
+          // Wait for it to reset itself
+          setTimeout(function() {
+            // Now tell it to write data on the current light level to Bluetooth
+            // 10 times a second. Also ensure that when disconnected, Puck.js
+            // resets so the setInterval doesn't keep draining battery.
+            connection.write("setInterval(function(){Bluetooth.println(Puck.light());},100);NRF.on('disconnect', function() {reset()});\n",
+              function() { console.log("Ready..."); });
+          }, 1500);
+        });
+      });
     });
   </script>
-  </body>
- </html>
+ </body>
+</html>
