@@ -1,9 +1,122 @@
 <html>
  <head>
+   <style>
+     body { margin:0;  }
+     svg {
+       display:block; position:absolute;
+       top:0%; left:0%; width:100%; height:100%;
+     }
+   </style>    
  </head>
  <body>
+  <svg viewBox="0 0 24 24">
+    <path fill="#000000" d="M12,2A7,7 0 0,0 5,9C5,11.38 6.19,13.47 8,14.74V17A1,1 0 0,0 9,18H15A1,1 0 0,0 16,17V14.74C17.81,13.47 19,11.38 19,9A7,7 0 0,0 12,2M9,21A1,1 0 0,0 10,22H14A1,1 0 0,0 15,21V20H9V21Z" />
+  </svg>
   <script src="https://www.puck-js.com/puck.js"></script>
-  <button onclick="Puck.write('LED1.set();\n');">On!</button>
-  <button onclick="Puck.write('LED1.reset();\n');">Off!</button>
+  <script type="text/javascript">
+    // Get the actual curve inside the SVG. You could make differemt
+    // parts of a more complex SVG do different things...
+    var path = document.getElementsByTagName('path')[0];
+    // Make sure your mouse cursor turns into a hand when over it, and gray it out
+    path.style="cursor:pointer;fill:#BBB";
+
+    function getLightValue() {
+      Puck.eval("Puck.light()", function(v) {
+        path.style.fill="rgb("+Math.round(v*255)+",0,0)";
+        setTimeout(function() {
+          getLightValue();
+        }, 250);
+      });
+    }
+
+    // When clicked, start trying to get the light value
+    path.addEventListener("click", function() {
+      getLightValue();
+    });
+  </script>
+ </body>
+</html>
+Now, when you click the light bulb it'll connect to Puck.js, and you can change the colour by shining light on or covering up your Puck.
+
+Note: we're only requesting new data after we have got the last set of data. This is better than using something like setInterval, as if there are transmission errors, multiple requests for data could end up piling up.
+
+This works, and it's easy - but it's not very fast.
+
+Two way communications⇠
+What would be better is if we had lower-level control. We could then just tell Espruino to automatically send data over Bluetooth (without being prompted) and we could just handle it directly.
+
+That's what you can do with Puck.connect(callback). Once connected it calls the callback function with the connection, which you can then use to send and receive data.
+
+Note: You can't use Puck.connect and Puck.write/eval on the same connection at the same time. If you want to write to a Puck after having used Puck.connect, you need to use connection.write and handle any response in the connection.on("data", handler.
+
+Try the example below:
+
+<html>
+ <head>
+   <style>
+     body { margin:0;  }
+     svg {
+       display:block; position:absolute;
+       top:0%; left:0%; width:100%; height:100%;
+     }
+   </style>    
+ </head>
+ <body>
+  <svg viewBox="0 0 24 24">
+    <path fill="#000000" d="M12,2A7,7 0 0,0 5,9C5,11.38 6.19,13.47 8,14.74V17A1,1 0 0,0 9,18H15A1,1 0 0,0 16,17V14.74C17.81,13.47 19,11.38 19,9A7,7 0 0,0 12,2M9,21A1,1 0 0,0 10,22H14A1,1 0 0,0 15,21V20H9V21Z" />
+  </svg>
+  <script src="https://www.puck-js.com/puck.js"></script>
+  <script type="text/javascript">
+    // Get the actual curve inside the SVG. You could make differemt
+    // parts of a more complex SVG do different things...
+    var path = document.getElementsByTagName('path')[0];
+    // Make sure your mouse cursor turns into a hand when over it, and gray it out
+    path.style="cursor:pointer;fill:#BBB";
+
+    // Called when we get a line of data - updates the light color
+    function onLine(v) {
+      console.log("Received: "+JSON.stringify(v));
+      path.style.fill="rgb("+Math.round(v*255)+",0,0)";
+    }
+
+    // When clicked, connect or disconnect
+    var connection;
+    path.addEventListener("click", function() {
+      if (connection) {
+        connection.close();
+        connection = undefined;
+      }
+      Puck.connect(function(c) {
+        if (!c) {
+          alert("Couldn't connect!");
+          return;
+        }
+        connection = c;
+        // Handle the data we get back, and call 'onLine'
+        // whenever we get a line
+        var buf = "";
+        connection.on("data", function(d) {
+          buf += d;
+          var i = buf.indexOf("\n");
+          while (i>=0) {
+            onLine(buf.substr(0,i));
+            buf = buf.substr(i+1);
+            i = buf.indexOf("\n");
+          }
+        });
+        // First, reset Puck.js
+        connection.write("reset();\n", function() {
+          // Wait for it to reset itself
+          setTimeout(function() {
+            // Now tell it to write data on the current light level to Bluetooth
+            // 10 times a second. Also ensure that when disconnected, Puck.js
+            // resets so the setInterval doesn't keep draining battery.
+            connection.write("setInterval(function(){Bluetooth.println(Puck.light());},100);NRF.on('disconnect', function() {reset()});\n",
+              function() { console.log("Ready..."); });
+          }, 1500);
+        });
+      });
+    });
+  </script>
  </body>
 </html>
