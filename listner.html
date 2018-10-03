@@ -4,11 +4,15 @@
 <script>
 
 'use strict';
-
+  var count = 0;
 document.addEventListener('keypress', (event) => {
   const keyName = event.key;
-
-  alert('keypress event\n\n' + 'key: ' + keyName);
+  
+    if (event.key === "1") {
+                count++;
+            }
+  
+  alert('keypress event\n\n' + 'key: ' + keyName + ' ' + count);
 });
 
 </script>
