@@ -1,4 +1,4 @@
-//prevent creation of empty tasks.//Document is the DOM can be accessed in the console with document.window.
+//Document is the DOM can be accessed in the console with document.window.
 // Tree is from the top, html, body, p etc.
 
 //Problem: User interaction does not provide the correct results.
@@ -182,6 +182,8 @@ var bindTaskEvents=function(taskListItem,checkBoxEventHandler){
 
 
 
-// Issues with usabiliy don't get seen until th
+// Issues with usabiliy don't get seen until they are in front of a human tester.
+
+//prevent creation of empty tasks.
 
 //Shange edit to save when you are in edit mode.
