@@ -6,7 +6,7 @@ body {
 }
 .container {
   display: block;
-  width: 400px;
+  width: 500px;
   margin: 100px auto 0;
 }
 ul {
@@ -28,7 +28,7 @@ button {
   border: 0px;
   color: #888;
   font-size: 15px;
-  width: 60px;
+  width: 80px;
   margin: 10px 0 0;
   font-family: Lato, sans-serif;
   cursor: pointer;
@@ -70,7 +70,7 @@ label[for='new-task'] {
 }
 input#new-task {
   float: left;
-  width: 318px;
+  width: 398px;
 }
 p > button:hover {
   color: #0FC57C;
@@ -90,11 +90,11 @@ li > input[type="checkbox"] {
 li > label {
   font-size: 18px;
   line-height: 40px;
-  width: 237px;
+  width: 297px;
   padding: 0 0 0 11px;
 }
 li >  input[type="text"] {
-  width: 226px;
+  width: 286px;
 }
 li > .delete:hover {
   color: #CF2323;
