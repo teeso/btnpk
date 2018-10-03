@@ -1,5 +1,3 @@
-ey are in front of a human tester.
-
 //prevent creation of empty tasks.//Document is the DOM can be accessed in the console with document.window.
 // Tree is from the top, html, body, p etc.
 
