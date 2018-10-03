@@ -1,0 +1,60 @@
+<html>
+ <head>
+ </head>
+ <body>
+  <script src="https://www.puck-js.com/puck.js"></script>
+  <button class="connect_button" btn="A">Connect A</button>
+  <button class="connect_button" btn="B">Connect B</button>
+  <button class="connect_button" btn="C">Connect C</button>
+  <pre id="log"></pre>
+  <script type="text/javascript">
+    function log(txt) {
+      console.log(txt);
+      document.getElementById("log").innerHTML += txt+"\n";
+    }
+    // Called when we get a line of data 
+    function onLine(btn,v) {
+      if (v.indexOf("Pressed")>=0)
+       log("Button "+btn+" pressed!");
+    }
+    // When clicked, connect or disconnect
+    var connection;    
+    var buttons = document.getElementsByClassName("connect_button");
+    for (var i=0;i<buttons.length;i++) {
+      buttons[i].addEventListener("click", function() {
+        var btn = this;
+        var btnid = this.getAttribute("btn");
+        Puck.connect(function(connection) {
+          if (!connection) {
+            alert("Couldn't connect!");
+            return;
+          }
+          log("Connected to "+btnid);
+          this.style="display:none";
+          // Handle the data we get back, and call 'onLine'
+          // whenever we get a complete line
+          var buf = "";
+          connection.on("data", function(d) {
+            buf += d;
+            var i = buf.indexOf("\n");
+            while (i>=0) {
+              onLine(btnid, buf.substr(0,i));
+              buf = buf.substr(i+1);
+              i = buf.indexOf("\n");
+            }
+          });
+          // First, reset Puck.js
+          connection.write("reset();\n", function() {
+            // Wait for it to reset itself
+            setTimeout(function() {
+              // Now tell it to print text whenever the button is pressed
+              connection.write('\x10setWatch(function() {console.log("Pressed");}, BTN, { edge: "rising", debounce: 50, repeat: true });\n',
+               function() { console.log("Ready..."); });
+             }, 1500);
+          });
+        });
+      });
+    }
+  </script>
+ </body>
+</html>
