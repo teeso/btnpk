@@ -1,21 +1,3 @@
-
-/*
-
-document.addEventListener('keypress', (event) => {
-  const keyName = event.key;
-  
-    if (event.key === "1") {
-                count++;
-            }
-  else {  
-        count--;  
-    }
-  
-  alert('keypress event\n\n' + 'key: ' + keyName + ' ' + count + ' ' + document.lastModified);
-});
-
-*/
-
 //Event handling, uder interaction is what starts the code execution.
 
 var taskInput=document.getElementById("new-task");//Add a new task.
@@ -124,8 +106,6 @@ var taskCompleted=function(){
 		console.log("Complete Task...");
 	
 	//Append the task list item to the #completed-tasks
-	a = label.innerText 
-	alert (label.innerText );
 	var listItem=this.parentNode;
 	
 	completedTasksHolder.appendChild(listItem);
