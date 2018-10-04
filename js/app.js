@@ -154,6 +154,18 @@ var ajaxRequest=function(){
 addButton.onclick=addTask;
 addButton.addEventListener("click",addTask);
 addButton.addEventListener("click",ajaxRequest);
+document.addEventListener('keypress', (event) => {
+  const keyName = event.key;
+  
+    if (event.key === "1") {
+                count++;
+	    taskInput.value = (count + ' ' + document.lastModified)
+	    var listItem=createNewTaskElement(taskInput.value);
+	    incompleteTaskHolder.appendChild(listItem);
+	bindTaskEvents(listItem, taskCompleted);
+	taskInput.value="";
+            }
+});
 
 
 var bindTaskEvents=function(taskListItem,checkBoxEventHandler){
@@ -177,7 +189,7 @@ var bindTaskEvents=function(taskListItem,checkBoxEventHandler){
 	for (var i=0; i<incompleteTaskHolder.children.length;i++){
 
 		//bind events to list items chldren(tasksCompleted)
-		bindTaskEvents(incompleteTaskHolder.children[i--],taskCompleted);
+		bindTaskEvents(incompleteTaskHolder.children[i],taskCompleted);
 	}
 
 
