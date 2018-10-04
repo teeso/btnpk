@@ -124,8 +124,8 @@ var taskCompleted=function(){
 		console.log("Complete Task...");
 	
 	//Append the task list item to the #completed-tasks
-	label.innerText = label.innerText + ' ' + document.lastModified
-	
+	a = label.innerText 
+	alert (label.innerText );
 	var listItem=this.parentNode;
 	
 	completedTasksHolder.appendChild(listItem);
