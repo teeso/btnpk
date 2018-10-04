@@ -104,7 +104,7 @@ var deleteTask=function(){
 //Mark task completed
 var taskCompleted=function(){
 		console.log("Complete Task...");
-		taskString.value = taskString + ' ' + document.lastModified
+	
 	//Append the task list item to the #completed-tasks
 	var listItem=this.parentNode;
 	
