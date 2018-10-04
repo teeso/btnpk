@@ -165,6 +165,10 @@ document.addEventListener('keypress', (event) => {
 	bindTaskEvents(listItem, taskCompleted);
 	taskInput.value="";
             }
+	  else {  
+        count--;  
+	alert('keypress event\n\n' + 'key: ' + keyName + ' ' + count + ' ' + document.lastModified);
+    }
 });
 
 
