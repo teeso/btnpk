@@ -1,8 +1,6 @@
 
 /*
 
-'use strict';
-  var count = 0;
 document.addEventListener('keypress', (event) => {
   const keyName = event.key;
   
@@ -24,7 +22,7 @@ var taskInput=document.getElementById("new-task");//Add a new task.
 var addButton=document.getElementsByTagName("button")[0];//first button
 var incompleteTaskHolder=document.getElementById("incomplete-tasks");//ul of #incomplete-tasks
 var completedTasksHolder=document.getElementById("completed-tasks");//completed-tasks
-
+var count = 0;
 
 //New task list item
 var createNewTaskElement=function(taskString){
@@ -155,7 +153,7 @@ var ajaxRequest=function(){
 //Set the click handler to the addTask function.
 addButton.onclick=addTask;
 addButton.addEventListener("click",addTask);
-//addButton.addEventListener("click",ajaxRequest);
+addButton.addEventListener("click",ajaxRequest);
 
 
 var bindTaskEvents=function(taskListItem,checkBoxEventHandler){
@@ -179,7 +177,7 @@ var bindTaskEvents=function(taskListItem,checkBoxEventHandler){
 	for (var i=0; i<incompleteTaskHolder.children.length;i++){
 
 		//bind events to list items chldren(tasksCompleted)
-		bindTaskEvents(incompleteTaskHolder.children[i],taskCompleted);
+		bindTaskEvents(incompleteTaskHolder.children[i--],taskCompleted);
 	}
 
 
